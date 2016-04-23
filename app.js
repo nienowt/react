@@ -12,8 +12,6 @@ var Content = React.createClass({
     return this.setState({data:postArray})
   },
   showEdit:function(props){
-    console.log('hello')
-    console.log(props)
     var singlePost = postArray.filter((post)=>{
       return post.id == props
     })
@@ -45,6 +43,11 @@ var EditForm = React.createClass({
   editBlood: function(evt){
     this.setState({bloodType: evt.target.value})
   },
+  cancel: function(evt){
+    evt.preventDefault()
+    this.setState({name:this.props.data.name, bloodType:this.props.data.bloodType})
+    this.props.cancelEdit()
+  },
   render: function(){
     return (
       <form className="editForm" onSubmit={this.handleSubmit}>
@@ -61,6 +64,7 @@ var EditForm = React.createClass({
           onChange={this.editBlood}
         />
         <button type="submit">ED~IT</button>
+        <button onClick={this.cancel}>Cancel</button>
       </form>
     )
   }
@@ -71,19 +75,16 @@ var PostList = React.createClass({
     return {showEdit: false}
   },
   handleClick: function(evt){
-    console.log(this.props)
-    console.log('this is it',evt.target.id)
     var show = this.state.showEdit
-    this.props.onEditClick(evt.target.id)
+    this.props.onEditClick(evt? evt.target.id :null)
     this.setState({showEdit:!show})
-    console.log(this.state)
   },
   render: function(){
     var nodes = this.props.data.map((post) => {
       return (
         <div key={post.id}>
           <Post name = {post.name}>{post.bloodType}</Post>
-          {this.state.showEdit ? <EditForm data={post}/> : null}
+          {this.state.showEdit ? <EditForm data={post} cancelEdit={this.handleClick}/> : null}
           <button id={post.id} onClick={this.handleClick} type="button">Edit</button>
         </div>
       )
