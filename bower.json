@@ -1,0 +1,21 @@
+{
+  "name": "react",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "nienowt <elstad.nienow@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/nienowt/react",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "^15.0.1"
+  }
+}

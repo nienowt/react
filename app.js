@@ -1,22 +1,23 @@
+'use strict';
+
 var postArray = [
   {id: 1, name:"gor", bloodType:"Bee"},
   {id: 2, name:"swello", bloodType:"ehBee"}
 ];
 
+//handles page state
 var Content = React.createClass({
   getInitialState: function(){
     return {data:postArray, showPostForm: true};
   },
   update: function(post){
-    postArray.push(post)
-    return this.setState({data:postArray})
+    postArray.push(post);
+    return this.setState({data:postArray});
   },
   removePost:function(id){
-    console.log(id)
     var data = postArray.filter((post) => {
       return post.id != id;
     })
-    console.log(data)
     this.setState({data: data, showPostForm: true})
     postArray = data;
   },
@@ -31,26 +32,25 @@ var Content = React.createClass({
   render: function(){
     return (
       <section id="postArray">
-      <PostList data={this.state.data} onEditClick={this.showEdit} delete={this.removePost}></PostList>
+      <PostList data={this.state.data} onEditClick={this.showEdit} deletePost={this.removePost}></PostList>
       {this.state.showPostForm ? <PostForm onPostSubmit = {this.update}></PostForm> : null}
       </section>
     );
   }
 });
 
+//updates / deletes posts
 var EditForm = React.createClass({
   getInitialState: function(){
     return {name:this.props.data.name, bloodType:this.props.data.bloodType}
   },
   handleSubmit: function(evt){
     evt.preventDefault()
-    console.log(this.props.data)
     this.props.data.name = this.state.name
     this.props.data.bloodType = this.state.bloodType
     this.props.handleEdit()
   },
   editName: function(evt){
-    console.log(this.props.data.name)
     this.setState({name: evt.target.value})
   },
   editBlood: function(evt){
@@ -59,7 +59,6 @@ var EditForm = React.createClass({
   delete: function(evt){
     evt.preventDefault()
     this.props.deletePost(evt.target.id)
-    console.log(evt.target.id)
   },
   cancel: function(evt){
     evt.preventDefault()
@@ -89,20 +88,22 @@ var EditForm = React.createClass({
   }
 })
 
+//displays posts
 var PostList = React.createClass({
   getInitialState: function(){
-    return {showEdit: false}
+    return {showEdit: false, showPostForm: true}
   },
   handleClick: function(evt){
     var show = this.state.showEdit
+    var showPost = this.state.showPostForm
     this.props.onEditClick(evt? evt.target.id :null)
-    this.setState({showEdit:!show})
+    this.setState({showEdit:!show, showPostForm:!showPost})
   },
   handleDelete: function(id){
-    console.log(id)
     var show = this.state.showEdit
-    this.setState({showEdit:!show})
-    this.props.delete(id)
+    var showPost = this.state.showPostForm
+    this.setState({showEdit:!show, showPostForm:!showPost})
+    this.props.deletePost(id)
   },
   render: function(){
     var nodes = this.props.data.map((post) => {
@@ -110,7 +111,7 @@ var PostList = React.createClass({
         <div key={post.id}>
           <Post name = {post.name}>{post.bloodType}</Post>
           {this.state.showEdit ? <EditForm data={post} handleEdit={this.handleClick} deletePost={this.handleDelete}/> : null}
-          <button id={post.id} onClick={this.handleClick} type="button">Edit</button>
+          {this.state.showPostForm ? <button id={post.id} onClick={this.handleClick} type="button">Edit</button> : null}
         </div>
       )
     })
@@ -133,6 +134,8 @@ var Post = React.createClass({
   }
 })
 
+
+//saves new post
 var PostForm = React.createClass({
   getInitialState: function(){
     return {name:'', bloodType:''}
@@ -171,6 +174,8 @@ var PostForm = React.createClass({
     );
   }
 });
+
+
 
 ReactDOM.render(
   <Content data={postArray}></Content>,
